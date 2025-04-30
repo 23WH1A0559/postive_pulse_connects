@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Business Directory</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .profile-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-container img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 15px;
+            border: 2px solid #007bff;
+        }
+
+        .profile-container p {
+            margin: 0;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #searchInput {
+            width: 50%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: scale(1.03);
+        }
+
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: #007bff;
+        }
+
+        .card p {
+            font-size: 14px;
+            color: #555;
+        }
+
+        /* Message Box Styling */
+        .message-box {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 300px;
+        }
+
+        .message-box textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            resize: none;
+        }
+
+        .message-box button {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .message-box button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="profile-container" id="userProfile"></div>
+    <a href="payment.html">Mode of Investment</a>
+
+    <h1>Business Directory</h1>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" onkeyup="searchBusinesses()" placeholder="Search businesses...">
+    </div>
+
+    <div class="grid-container" id="businessGrid"></div>
+
+    <!-- Message Box -->
+    <div id="messageBox" class="message-box">
+        <h3>Send a Message to <span id="selectedCompany"></span></h3>
+        <textarea id="messageContent" placeholder="Enter your message here..." rows="5" required></textarea><br>
+        <button onclick="sendMessage()">Send Message</button>
+        <button onclick="closeMessageBox()">Cancel</button>
+    </div>
+
+    <script>
+        const businesses = [
+            { name: "Airbnb", industry: "Hospitality", business: "An online marketplace for lodging, primarily homestays for vacation rentals, and tourism activities." },
+            { name: "Stripe", industry: "Fintech", business: "Provides payment processing for online businesses, enabling them to accept payments and manage transactions." },
+            { name: "DoorDash", industry: "Food Delivery", business: "A food delivery service that connects people with local restaurants and independent contractors who deliver food." },
+            { name: "SpaceX", industry: "Aerospace", business: "Develops and launches rockets and spacecraft with the goal of reducing space transportation costs and making space exploration more accessible." },
+            { name: "Zoom", industry: "Communication", business: "Provides cloud-based video conferencing, online meetings, and collaboration tools for businesses and individuals." },
+            { name: "ByteDance", industry: "Technology", business: "A multinational internet technology company known for developing TikTok." },
+            { name: "Chime", industry: "Fintech", business: "Provides mobile banking services with no hidden fees." },
+            { name: "Nuro", industry: "Autonomous Vehicles", business: "Specializes in autonomous delivery vehicles designed to transport goods." },
+            { name: "Impossible Foods", industry: "Food Technology", business: "Develops plant-based meat substitutes to replace animal-derived products." },
+            { name: "Robinhood", industry: "Fintech", business: "Offers commission-free trading of stocks, options, and crypto." },
+            { name: "Plaid", industry: "Fintech", business: "Provides APIs that enable developers to access and integrate financial data." },
+            { name: "Instacart", industry: "E-commerce", business: "An online grocery delivery and pickup service." },
+            { name: "Oculus (Facebook Reality Labs)", industry: "Virtual Reality", business: "Develops VR hardware and software." },
+            { name: "Rivian", industry: "Electric Vehicles", business: "Manufactures all-electric trucks and SUVs." },
+            { name: "Gusto", industry: "HR Technology", business: "Provides payroll and HR software for businesses." },
+            { name: "Loom", industry: "Communication", business: "A video messaging platform for teams." },
+            { name: "CureMetrix", industry: "HealthTech", business: "Uses AI for better mammography readings." },
+            { name: "Notion", industry: "Productivity Software", business: "Combines note-taking, tasks, and collaboration tools." },
+            { name: "Helium", industry: "IoT & Telecom", business: "Decentralized wireless network for IoT." },
+            { name: "Square", industry: "Fintech", business: "POS systems and financial services for businesses." }
+        ];
+
+        const colors = [
+            "#fde2e4", "#f0efeb", "#e4f9f5", "#defcf9", "#d0f4de", "#e4c1f9",
+            "#c1fba4", "#fbc4ab", "#a0ced9", "#ffc8dd", "#d0bdf4", "#a9def9",
+            "#f9f9c5", "#f7d9c4", "#cce3de", "#e0fbfc", "#f1f0c0", "#e2ece9",
+            "#fcd5ce", "#d8e2dc"
+        ];
+
+        async function fetchUserProfile() {
+            try {
+                const email = localStorage.getItem('userEmail'); // Retrieve email from localStorage
+
+                if (!email) {
+                    // Handle case where user is not logged in (e.g., redirect to login page)
+                    document.getElementById('userProfile').innerHTML = '<p>Please log in to view your profile.</p>';
+                    return;
+                }
+
+                const response = await fetch(`http://localhost:3001/profile?email=${encodeURIComponent(email)}`, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const profileDiv = document.getElementById("userProfile");
+
+                    // Add user's profile details dynamically
+                    profileDiv.innerHTML = `
+                        <img src="https://cdn.pixabay.com/photo/2019/08/11/18/59/icon-4399701_1280.png" alt="Profile Logo">
+                        <p><strong>Hi ${data.username} (${data.user_type})</strong><br>
+                        Gender: ${data.gender}<br>
+                        Email: ${data.email}</p>
+                    `;
+                } else {
+                    alert("Failed to load profile data.");
+                }
+            } catch (error) {
+                console.error("Error fetching profile:", error);
+            }
+        }
+
+        function populateBusinessGrid() {
+            const businessGrid = document.getElementById("businessGrid");
+            businessGrid.innerHTML = "";
+            businesses.forEach((business, index) => {
+                const businessCard = document.createElement("div");
+                businessCard.classList.add("card");
+                businessCard.style.backgroundColor = colors[index % colors.length];
+                businessCard.innerHTML = `
+                    <h2>${business.name}</h2>
+                    <p><strong>Industry:</strong> ${business.industry}</p>
+                    <p><strong>Business:</strong> ${business.business}</p>
+                `;
+                businessCard.onclick = () => openMessageBox(business.name); // Open message box on click
+                businessGrid.appendChild(businessCard);
+            });
+        }
+
+        function searchBusinesses() {
+            const input = document.getElementById("searchInput").value.toLowerCase();
+            const filteredBusinesses = businesses.filter(business =>
+                business.name.toLowerCase().includes(input) || business.industry.toLowerCase().includes(input)
+            );
+
+            const businessGrid = document.getElementById("businessGrid");
+            businessGrid.innerHTML = "";
+            filteredBusinesses.forEach((business, index) => {
+                const businessCard = document.createElement("div");
+                businessCard.classList.add("card");
+                businessCard.style.backgroundColor = colors[index % colors.length];
+                businessCard.innerHTML = `
+                    <h2>${business.name}</h2>
+                    <p><strong>Industry:</strong> ${business.industry}</p>
+                    <p><strong>Business:</strong> ${business.business}</p>
+                `;
+                businessCard.onclick = () => openMessageBox(business.name); // Open message box on click
+                businessGrid.appendChild(businessCard);
+            });
+        }
+
+        function openMessageBox(companyName) {
+            document.getElementById("selectedCompany").textContent = companyName;
+            document.getElementById("messageBox").style.display = 'block'; // Show message box
+        }
+
+        function closeMessageBox() {
+            document.getElementById("messageBox").style.display = 'none'; // Hide message box
+        }
+
+        async function sendMessage() {
+            const messageContent = document.getElementById("messageContent").value;
+            const senderEmail = localStorage.getItem('userEmail');
+
+            if (!messageContent) {
+                alert("Please enter a message.");
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3001/send-message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        company: document.getElementById("selectedCompany").textContent,
+                        message: messageContent,
+                        sender_email: senderEmail
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Message sent successfully!');
+                    closeMessageBox();
+                } else {
+                    alert('Error sending message.');
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred while sending the message.");
+            }
+        }
+
+        window.onload = () => {
+            fetchUserProfile();
+            populateBusinessGrid();
+        };
+    </script>
+
+</body>
+</html>
