@@ -1,0 +1,89 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f9;
+}
+
+.login-container {
+    width: 300px; /* Reduce the overall width */
+    padding: 15px; /* Slightly decrease padding */
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+h2 {
+    margin-bottom: 15px; /* Reduce space below heading */
+    color: #333;
+    font-size: 18px; /* Smaller heading font size */
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 12px; /* Decrease spacing between fields */
+}
+
+label {
+    display: block;
+    margin-bottom: 4px; /* Reduce space below labels */
+    font-size: 13px; /* Smaller label font */
+    color: #555;
+}
+
+input, select {
+    width: 100%;
+    padding: 6px; /* Decrease input padding */
+    font-size: 13px; /* Smaller input text */
+    margin: 4px 0 8px; /* Adjust spacing */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px; /* Decrease button padding */
+    font-size: 13px; /* Smaller button text */
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 12px; /* Smaller link text */
+}
+
+a:hover {
+    text-decoration: underline;
+}
+.register-container {
+    width: 400px; /* Increase the width of the container */
+    padding: 25px; /* Add extra padding for a spacious look */
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin: 0 auto; /* Center the container */
+}
+/* Header for Profile Icon */
+/* Header for Profile Icon */
+header {
+    display: flex;
+    justify-content: flex-start; /* Align content to the left */
+    align-items: center; /* Vertically align the profile icon */
+    padding: 10px;
+    background-color: #f4f4f9; /* Background color for header */
+}
+
+
