@@ -1,30 +1,40 @@
+//frontend
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Business Directory</title>
+
     <style>
+        /* General Body and Heading Styles */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            background-color: #f5f5f5; /* Light grey background */
             margin: 0;
-            padding: 20px;
+            padding: 20px; /* Some padding around the content */
+            line-height: 1.6; /* Improved readability */
+            color: #333;
         }
 
         h1 {
             text-align: center;
             color: #333;
+            margin-bottom: 25px; /* Space below main heading */
         }
 
+        /* Profile Container (Matching Screenshot 19.jpg) */
         .profile-container {
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
-            background: #ffffff;
+            background-color: #e0fbfc; /* Light blue background for the profile box */
             padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            max-width: 800px; /* Limit width to keep it neat */
+            margin-left: auto;
+            margin-right: auto; /* Center the profile box */
         }
 
         .profile-container img {
@@ -32,268 +42,522 @@
             height: 60px;
             border-radius: 50%;
             margin-right: 15px;
-            border: 2px solid #007bff;
+            border: 2px solid #007bff; /* Blue border for profile pic */
+            object-fit: cover; /* Ensures image covers area without distortion */
         }
 
         .profile-container p {
             margin: 0;
-            font-size: 16px;
-            color: #555;
+            font-size: 1.1em;
+            color: #333;
         }
 
+        /* Link for Mode of Investment */
+        .profile-container a {
+            margin-left: 20px; /* Space from profile text */
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .profile-container a:hover {
+            text-decoration: underline;
+        }
+
+
+        /* Search Container (Matching Screenshot 19.jpg) */
         .search-container {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px; /* More space below search */
+            max-width: 800px; /* Limit width */
+            margin-left: auto;
+            margin-right: auto; /* Center the search input */
         }
 
         #searchInput {
-            width: 50%;
-            padding: 10px;
-            font-size: 16px;
+            width: 100%; /* Take full width of its container */
+            padding: 12px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box; /* Include padding in width */
         }
 
+        /* Grid Container (Matching Screenshot 19.jpg) */
         .grid-container {
             display: grid;
+            /* Creates responsive columns: min 300px, but adjusts to fit */
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+            gap: 20px; /* Space between cards */
+            padding: 0 20px; /* Padding for the grid */
+            max-width: 1200px; /* Adjust max width as needed */
+            margin: 0 auto; /* Center the grid */
         }
 
+        /* Business Cards (Matching Screenshot 19.jpg) */
         .card {
-            padding: 15px;
-            border-radius: 8px;
+            background-color: white; /* Default background, overridden by JS random colors */
+            padding: 20px;
+            border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-            cursor: pointer;
+            text-align: left;
+            cursor: pointer; /* Indicate it's clickable */
+            transition: transform 0.2s ease-in-out; /* Smooth hover effect */
         }
 
         .card:hover {
-            transform: scale(1.03);
+            transform: translateY(-5px); /* Lift card on hover */
         }
 
         .card h2 {
+            margin-top: 0;
             font-size: 20px;
-            margin-bottom: 5px;
-            color: #007bff;
+            margin-bottom: 10px;
+            color: #007bff; /* Example card title color */
+            text-align: left; /* Override general h2 centering */
         }
 
         .card p {
-            font-size: 14px;
             color: #555;
+            font-size: 0.95em;
+            line-height: 1.5;
+            margin-bottom: 5px; /* Spacing for paragraphs */
         }
 
-        /* Message Box Styling */
-        .message-box {
-            display: none;
+        /* --- Socket.IO Chat Box CSS --- */
+        #chatBox {
+            display: none; /* Hidden by default, shown by JS */
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            padding: 20px;
-            border: 1px solid #ccc;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            width: 300px;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 400px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1000; /* Ensure it's on top */
+            flex-direction: column; /* Use flexbox for vertical layout */
+            overflow: hidden; /* Ensures content stays within bounds */
         }
 
-        .message-box textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            resize: none;
-        }
-
-        .message-box button {
-            padding: 10px;
+        #chatHeader {
             background-color: #007bff;
-            color: #fff;
+            color: white;
+            padding: 10px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        #chatHeader button {
+            background: none;
             border: none;
+            color: white;
+            font-size: 1.2em;
             cursor: pointer;
+            padding: 0 5px;
+        }
+
+        #messagesContainer {
+            flex-grow: 1; /* Takes up available space */
+            padding: 10px;
+            overflow-y: auto; /* Enable scrolling for messages */
+            border-bottom: 1px solid #eee;
+            background-color: #e6e6e6; /* Light gray background for chat area */
+            display: flex;
+            flex-direction: column; /* Stack messages vertically */
+        }
+
+        .message {
+            background-color: #d1e7dd; /* Light green for received messages */
+            padding: 8px 12px;
+            border-radius: 15px;
+            margin-bottom: 8px;
+            max-width: 80%;
+            word-wrap: break-word; /* Prevents long words from breaking layout */
+            text-align: left;
+            align-self: flex-start; /* Align received messages to the left */
+        }
+
+        .message.sent {
+            background-color: #cce5ff; /* Light blue for sent messages */
+            align-self: flex-end; /* Align sent messages to the right */
+            margin-left: auto; /* Pushes sent messages to the right */
+            text-align: right;
+        }
+
+        .message-sender {
+            font-size: 0.8em;
+            color: #555;
+            margin-bottom: 2px;
+        }
+
+        .message.sent .message-sender {
+            text-align: right; /* Align sender name for sent messages to the right */
+        }
+
+        .message-content {
+            font-size: 0.9em;
+            color: #333;
+        }
+
+        .message-time {
+            font-size: 0.7em;
+            color: #777;
+            text-align: right; /* Time always aligned right within its message bubble */
+            margin-top: 5px;
+        }
+
+        #chatInputContainer {
+            padding: 10px;
+            display: flex;
+            gap: 10px; /* Space between input and button */
+            border-top: 1px solid #ddd;
+        }
+
+        #chatInput {
+            flex-grow: 1; /* Takes up most of the space */
+            padding: 8px;
+            border: 1px solid #ccc;
             border-radius: 5px;
         }
 
-        .message-box button:hover {
+        #sendChatMessageBtn {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #sendChatMessageBtn:hover {
             background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-
-    <div class="profile-container" id="userProfile"></div>
-    <a href="payment.html">Mode of Investment</a>
+    <div class="profile-container">
+        <img src="https://cdn.pixabay.com/photo/2019/08/11/18/59/icon-4399701_1280.png" alt="Profile Picture">
+        <div>
+            <p>Hi <span id="usernameDisplay"></span> (<span id="userTypeDisplay"></span>)</p>
+            <p>Gender: <span id="genderDisplay"></span></p>
+            <p>Email: <span id="emailDisplay"></span></p>
+        </div>
+        <a href="payment.html" style="margin-left: auto;">Mode of Investment</a>
+    </div>
 
     <h1>Business Directory</h1>
 
     <div class="search-container">
-        <input type="text" id="searchInput" onkeyup="searchBusinesses()" placeholder="Search businesses...">
+        <input type="text" id="searchInput" placeholder="Search businesses...">
     </div>
 
-    <div class="grid-container" id="businessGrid"></div>
+    <div class="grid-container" id="businessContainer">
+        </div>
 
-    <!-- Message Box -->
-    <div id="messageBox" class="message-box">
-        <h3>Send a Message to <span id="selectedCompany"></span></h3>
-        <textarea id="messageContent" placeholder="Enter your message here..." rows="5" required></textarea><br>
-        <button onclick="sendMessage()">Send Message</button>
-        <button onclick="closeMessageBox()">Cancel</button>
+    <div id="chatBox">
+        <div id="chatHeader">
+            <span id="chatCompanyName"></span>
+            <button id="closeChatBtn">&times;</button>
+        </div>
+        <div id="messagesContainer">
+            </div>
+        <div id="chatInputContainer">
+            <input type="text" id="chatInput" placeholder="Type your message...">
+            <button id="sendChatMessageBtn">Send</button>
+        </div>
     </div>
 
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script>
+        const API_URL = 'http://localhost:3001';
+        let currentUserEmail = ''; // To store the logged-in user's email
+        let currentUserType = ''; // To store the logged-in user's type
+        let currentUserAffiliatedCompany = ''; // To store company for startup users
+
+        // Initialize Socket.IO connection
+        const socket = io(API_URL);
+
+        // Global variable to store the currently active chat company
+        let activeChatCompany = null;
+
+        // Element references
+        const usernameDisplay = document.getElementById('usernameDisplay');
+        const emailDisplay = document.getElementById('emailDisplay');
+        const genderDisplay = document.getElementById('genderDisplay');
+        const userTypeDisplay = document.getElementById('userTypeDisplay');
+        const searchInput = document.getElementById('searchInput');
+        const businessContainer = document.getElementById('businessContainer');
+
+        const chatBox = document.getElementById('chatBox');
+        const chatHeader = document.getElementById('chatHeader');
+        const chatCompanyName = document.getElementById('chatCompanyName');
+        const closeChatBtn = document.getElementById('closeChatBtn');
+        const messagesContainer = document.getElementById('messagesContainer');
+        const chatInput = document.getElementById('chatInput');
+        const sendChatMessageBtn = document.getElementById('sendChatMessageBtn');
+
+
+        // Dummy business data (You can fetch this from your backend if you create a /businesses endpoint later)
         const businesses = [
-            { name: "Airbnb", industry: "Hospitality", business: "An online marketplace for lodging, primarily homestays for vacation rentals, and tourism activities." },
-            { name: "Stripe", industry: "Fintech", business: "Provides payment processing for online businesses, enabling them to accept payments and manage transactions." },
-            { name: "DoorDash", industry: "Food Delivery", business: "A food delivery service that connects people with local restaurants and independent contractors who deliver food." },
-            { name: "SpaceX", industry: "Aerospace", business: "Develops and launches rockets and spacecraft with the goal of reducing space transportation costs and making space exploration more accessible." },
-            { name: "Zoom", industry: "Communication", business: "Provides cloud-based video conferencing, online meetings, and collaboration tools for businesses and individuals." },
-            { name: "ByteDance", industry: "Technology", business: "A multinational internet technology company known for developing TikTok." },
-            { name: "Chime", industry: "Fintech", business: "Provides mobile banking services with no hidden fees." },
-            { name: "Nuro", industry: "Autonomous Vehicles", business: "Specializes in autonomous delivery vehicles designed to transport goods." },
-            { name: "Impossible Foods", industry: "Food Technology", business: "Develops plant-based meat substitutes to replace animal-derived products." },
-            { name: "Robinhood", industry: "Fintech", business: "Offers commission-free trading of stocks, options, and crypto." },
-            { name: "Plaid", industry: "Fintech", business: "Provides APIs that enable developers to access and integrate financial data." },
-            { name: "Instacart", industry: "E-commerce", business: "An online grocery delivery and pickup service." },
-            { name: "Oculus (Facebook Reality Labs)", industry: "Virtual Reality", business: "Develops VR hardware and software." },
-            { name: "Rivian", industry: "Electric Vehicles", business: "Manufactures all-electric trucks and SUVs." },
-            { name: "Gusto", industry: "HR Technology", business: "Provides payroll and HR software for businesses." },
-            { name: "Loom", industry: "Communication", business: "A video messaging platform for teams." },
-            { name: "CureMetrix", industry: "HealthTech", business: "Uses AI for better mammography readings." },
-            { name: "Notion", industry: "Productivity Software", business: "Combines note-taking, tasks, and collaboration tools." },
-            { name: "Helium", industry: "IoT & Telecom", business: "Decentralized wireless network for IoT." },
-            { name: "Square", industry: "Fintech", business: "POS systems and financial services for businesses." }
+            { name: "Airbnb", industry: "Hospitality", description: "An online marketplace for lodging, primarily homestays for vacation rentals, and tourism activities." },
+            { name: "Stripe", industry: "Fintech", description: "Provides payment processing for online businesses, enabling them to accept payments and manage transactions." },
+            { name: "DoorDash", industry: "Food Delivery", description: "A food delivery service that connects people with local restaurants and independent contractors who deliver food." },
+            { name: "SpaceX", industry: "Aerospace", description: "Develops and launches rockets and spacecraft with the goal of reducing space transportation costs and making space exploration more accessible." },
+            { name: "Zoom", industry: "Communication", description: "Provides cloud-based video conferencing, online meetings, and collaboration tools for businesses." },
+            { name: "ByteDance", industry: "Technology", description: "A multinational internet technology company known for developing TikTok." },
+            { name: "Chime", industry: "Fintech", description: "Provides mobile banking services with no hidden fees." },
+            { name: "Nuro", industry: "Autonomous Vehicles", description: "Specializes in autonomous delivery vehicles designed to transport goods." },
+            { name: "Impossible Foods", industry: "Food Technology", description: "Develops plant-based meat substitutes to replace animal-derived products." },
+            { name: "Robinhood", industry: "Fintech", description: "Offers commission-free trading of stocks, options, and crypto." },
+            { name: "Plaid", industry: "Fintech", description: "Provides APIs that enable developers to access and integrate financial data." },
+            { name: "Instacart", industry: "E-commerce", description: "An online grocery delivery and pickup service." },
+            { name: "Oculus (Facebook Reality Labs)", industry: "Virtual Reality", description: "Develops VR hardware and software." },
+            { name: "Rivian", industry: "Electric Vehicles", description: "Manufactures all-electric trucks and SUVs." },
+            { name: "Gusto", industry: "HR Technology", description: "Provides payroll and HR software for businesses." },
+            { name: "Loom", industry: "Communication", description: "A video messaging platform for teams." },
+            { name: "CureMetrix", industry: "HealthTech", description: "Uses AI for better mammography readings." },
+            { name: "Notion", industry: "Productivity Software", description: "Combines note-taking, tasks, and collaboration tools." },
+            { name: "Helium", industry: "IoT & Telecom", description: "Decentralized wireless network for IoT." },
+            { name: "Square", industry: "Fintech", description: "POS systems and financial services for businesses." }
         ];
 
-        const colors = [
-            "#fde2e4", "#f0efeb", "#e4f9f5", "#defcf9", "#d0f4de", "#e4c1f9",
-            "#c1fba4", "#fbc4ab", "#a0ced9", "#ffc8dd", "#d0bdf4", "#a9def9",
-            "#f9f9c5", "#f7d9c4", "#cce3de", "#e0fbfc", "#f1f0c0", "#e2ece9",
-            "#fcd5ce", "#d8e2dc"
+        // Random colors for business cards (matching screenshot 19.jpg's varied colors)
+        const cardColors = [
+            "#ffe0e6", "#e0f7fa", "#e6ffed", "#f3e5f5", // Pink, Light Blue, Light Green, Light Purple
+            "#fde2e4", "#f0efeb", "#e4f9f5", "#defcf9",
+            "#d0f4de", "#e4c1f9", "#c1fba4", "#fbc4ab",
+            "#a0ced9", "#ffc8dd", "#d0bdf4", "#a9def9"
         ];
 
+
+        // Function to fetch user profile
         async function fetchUserProfile() {
-            try {
-                const email = localStorage.getItem('userEmail'); // Retrieve email from localStorage
+            const email = localStorage.getItem('userEmail'); // This should be the user's email stored during login
 
-                if (!email) {
-                    // Handle case where user is not logged in (e.g., redirect to login page)
-                    document.getElementById('userProfile').innerHTML = '<p>Please log in to view your profile.</p>';
-                    return;
-                }
-
-                const response = await fetch(`http://localhost:3001/profile?email=${encodeURIComponent(email)}`, {
-                    method: "GET",
-                    headers: { "Content-Type": "application/json" },
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    const profileDiv = document.getElementById("userProfile");
-
-                    // Add user's profile details dynamically
-                    profileDiv.innerHTML = `
-                        <img src="https://cdn.pixabay.com/photo/2019/08/11/18/59/icon-4399701_1280.png" alt="Profile Logo">
-                        <p><strong>Hi ${data.username} (${data.user_type})</strong><br>
-                        Gender: ${data.gender}<br>
-                        Email: ${data.email}</p>
-                    `;
-                } else {
-                    alert("Failed to load profile data.");
-                }
-            } catch (error) {
-                console.error("Error fetching profile:", error);
-            }
-        }
-
-        function populateBusinessGrid() {
-            const businessGrid = document.getElementById("businessGrid");
-            businessGrid.innerHTML = "";
-            businesses.forEach((business, index) => {
-                const businessCard = document.createElement("div");
-                businessCard.classList.add("card");
-                businessCard.style.backgroundColor = colors[index % colors.length];
-                businessCard.innerHTML = `
-                    <h2>${business.name}</h2>
-                    <p><strong>Industry:</strong> ${business.industry}</p>
-                    <p><strong>Business:</strong> ${business.business}</p>
-                `;
-                businessCard.onclick = () => openMessageBox(business.name); // Open message box on click
-                businessGrid.appendChild(businessCard);
-            });
-        }
-
-        function searchBusinesses() {
-            const input = document.getElementById("searchInput").value.toLowerCase();
-            const filteredBusinesses = businesses.filter(business =>
-                business.name.toLowerCase().includes(input) || business.industry.toLowerCase().includes(input)
-            );
-
-            const businessGrid = document.getElementById("businessGrid");
-            businessGrid.innerHTML = "";
-            filteredBusinesses.forEach((business, index) => {
-                const businessCard = document.createElement("div");
-                businessCard.classList.add("card");
-                businessCard.style.backgroundColor = colors[index % colors.length];
-                businessCard.innerHTML = `
-                    <h2>${business.name}</h2>
-                    <p><strong>Industry:</strong> ${business.industry}</p>
-                    <p><strong>Business:</strong> ${business.business}</p>
-                `;
-                businessCard.onclick = () => openMessageBox(business.name); // Open message box on click
-                businessGrid.appendChild(businessCard);
-            });
-        }
-
-        function openMessageBox(companyName) {
-            document.getElementById("selectedCompany").textContent = companyName;
-            document.getElementById("messageBox").style.display = 'block'; // Show message box
-        }
-
-        function closeMessageBox() {
-            document.getElementById("messageBox").style.display = 'none'; // Hide message box
-        }
-
-        async function sendMessage() {
-            const messageContent = document.getElementById("messageContent").value;
-            const senderEmail = localStorage.getItem('userEmail');
-
-            if (!messageContent) {
-                alert("Please enter a message.");
+            if (!email) {
+                console.error('User email not found in local storage. Redirecting to login.');
+                window.location.href = 'login.html'; // Redirect to login page
                 return;
             }
 
             try {
-                const response = await fetch('http://localhost:3001/send-message', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        company: document.getElementById("selectedCompany").textContent,
-                        message: messageContent,
-                        sender_email: senderEmail
-                    })
+                const response = await fetch(`${API_URL}/profile?email=${email}`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
                 });
 
                 if (response.ok) {
-                    alert('Message sent successfully!');
-                    closeMessageBox();
+                    const userData = await response.json();
+                    usernameDisplay.textContent = userData.username;
+                    emailDisplay.textContent = userData.email;
+                    genderDisplay.textContent = userData.gender;
+                    userTypeDisplay.textContent = userData.user_type;
+
+                    // Store global user data for chat and identity
+                    currentUserEmail = userData.email;
+                    currentUserType = userData.user_type;
+                    // Get affiliated_company from DB for startup users
+                    currentUserAffiliatedCompany = userData.affiliated_company;
+
+                    // Send user identity to the backend via Socket.IO
+                    // This is crucial for startups to join their company room
+                    if (socket.connected) {
+                        socket.emit('setIdentity', {
+                            email: currentUserEmail,
+                            userType: currentUserType,
+                            affiliatedCompany: currentUserAffiliatedCompany // Will be null for non-startups
+                        });
+                    } else {
+                        // If socket not yet connected, set a listener for when it does
+                        socket.on('connect', () => {
+                             socket.emit('setIdentity', {
+                                email: currentUserEmail,
+                                userType: currentUserType,
+                                affiliatedCompany: currentUserAffiliatedCompany
+                            });
+                        });
+                    }
+
                 } else {
-                    alert('Error sending message.');
+                    const errorText = await response.text();
+                    console.error('Failed to fetch profile:', errorText);
+                    alert('Failed to fetch profile: ' + errorText);
+                    window.location.href = 'login.html'; // Redirect to login
                 }
             } catch (error) {
-                console.error("Error:", error);
-                alert("An error occurred while sending the message.");
+                console.error('Error fetching profile:', error);
+                alert('An error occurred while fetching profile.');
+                window.location.href = 'login.html'; // Redirect to login
             }
         }
 
+        // Function to render business cards
+        function renderBusinesses(filter = '') {
+            businessContainer.innerHTML = ''; // Clear previous cards
+            const filteredBusinesses = businesses.filter(business =>
+                business.name.toLowerCase().includes(filter.toLowerCase()) ||
+                business.industry.toLowerCase().includes(filter.toLowerCase()) ||
+                business.description.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            filteredBusinesses.forEach((business, index) => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                // Assign distinct colors based on index for variety, using predefined array
+                card.style.backgroundColor = cardColors[index % cardColors.length];
+
+                card.innerHTML = `
+                    <h2>${business.name}</h2>
+                    <p><strong>Industry:</strong> ${business.industry}</p>
+                    <p><strong>Business:</strong> ${business.description}</p>
+                `;
+                // Attach click listener to open the Socket.IO chat
+                card.addEventListener('click', () => openChat(business.name));
+                businessContainer.appendChild(card);
+            });
+        }
+
+        // Function to open the Socket.IO chat box for a specific company
+        async function openChat(companyName) {
+            chatCompanyName.textContent = `Chat with ${companyName}`;
+            chatBox.style.display = 'flex'; // Use flex to enable column layout
+            messagesContainer.innerHTML = ''; // Clear previous messages
+
+            activeChatCompany = companyName; // Set the active chat company
+
+            // Join the Socket.IO room for this company
+            // This is for all users to receive messages for this company
+            socket.emit('joinCompanyRoom', companyName);
+
+            // Fetch historical messages for this company
+            try {
+                const response = await fetch(`${API_URL}/messages/${companyName}`);
+                if (response.ok) {
+                    const messages = await response.json();
+                    messages.forEach(msg => {
+                        // Pass sender_username and sender_user_type from fetched data
+                        displayMessage(msg.sender_email, msg.message_content, msg.timestamp, msg.sender_username, msg.sender_user_type);
+                    });
+                } else {
+                    console.error('Failed to fetch historical messages:', await response.text());
+                    alert('Failed to load chat history.');
+                }
+            } catch (error) {
+                console.error('Error fetching historical messages:', error);
+                alert('An error occurred while loading chat history.');
+            }
+        }
+
+        // Function to close the chat box
+        function closeChat() {
+            chatBox.style.display = 'none';
+            activeChatCompany = null; // Clear active chat company
+            // You could optionally leave the Socket.IO room here if preferred
+            // socket.emit('leaveCompanyRoom', chatCompanyName.textContent.replace('Chat with ', ''));
+        }
+
+        // Function to display a single message in the chat window
+        function displayMessage(senderEmail, message, timestamp, senderUsername, senderUserType) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+
+            // Add 'sent' class if the message is from the current user
+            if (senderEmail === currentUserEmail) {
+                messageElement.classList.add('sent');
+            }
+
+            const date = new Date(timestamp);
+            const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            // Decide what to display as the sender's name
+            let senderDisplayName = senderEmail; // Default to email
+            if (senderUsername) { // If username is available from backend
+                senderDisplayName = senderUsername;
+                if (senderUserType) { // If userType is also available
+                    senderDisplayName += ` (${senderUserType})`;
+                }
+            }
+
+            messageElement.innerHTML = `
+                <div class="message-sender">${senderDisplayName}</div>
+                <div class="message-content">${message}</div>
+                <div class="message-time">${timeString}</div>
+            `;
+            messagesContainer.appendChild(messageElement);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight; // Auto-scroll to latest message
+        }
+
+        // Event listener for sending chat messages
+        sendChatMessageBtn.addEventListener('click', () => {
+            const message = chatInput.value.trim();
+            if (message && activeChatCompany && currentUserEmail) {
+                socket.emit('sendMessage', {
+                    company: activeChatCompany,
+                    message: message,
+                    sender_email: currentUserEmail
+                });
+                chatInput.value = ''; // Clear input field
+            }
+        });
+
+        // Allow sending message with Enter key
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendChatMessageBtn.click();
+            }
+        });
+
+        // Close chat button event listener
+        closeChatBtn.addEventListener('click', closeChat);
+
+        // Socket.IO event listeners
+        socket.on('connect', () => {
+            console.log('Connected to Socket.IO server!');
+            // Re-emit identity if user data is already available (e.g., after a reconnect)
+            if (currentUserEmail) {
+                socket.emit('setIdentity', {
+                    email: currentUserEmail,
+                    userType: currentUserType,
+                    affiliatedCompany: currentUserAffiliatedCompany
+                });
+            }
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from Socket.IO server.');
+        });
+
+        socket.on('newMessage', (data) => {
+            // Check if the message is for the currently active chat
+            if (activeChatCompany && data.company === activeChatCompany) {
+                // Pass sender_username and sender_user_type from the received data
+                displayMessage(data.sender_email, data.message, data.timestamp, data.sender_username, data.sender_user_type);
+            }
+            // Optional: Add a notification here if the message is for a different company
+        });
+
+        socket.on('messageError', (errorMsg) => {
+            alert('Error sending message: ' + errorMsg);
+            console.error('Socket.IO message error:', errorMsg);
+        });
+
+        // Initial setup on page load
         window.onload = () => {
-            fetchUserProfile();
-            populateBusinessGrid();
+            fetchUserProfile(); // Fetch user profile to get email, type, etc.
+            renderBusinesses(); // Render all businesses initially
+
+            // Live search functionality
+            searchInput.addEventListener('keyup', (e) => {
+                renderBusinesses(e.target.value);
+            });
         };
     </script>
-
 </body>
 </html>
